@@ -82,12 +82,18 @@ namespace Flipper
             {
 
                 var f = featureClient.Lists["Flipper:Features"].FirstOrDefault(fe => fe == feature);
-                
+
                 if (f != null)
                 {
-                    feature.Name = f.Name;
                     feature.Percentage = f.Percentage;
                     feature.Groups = f.Groups;
+                    feature.Users = f.Users;
+                }
+                else
+                {
+                    feature.Percentage = 0;
+                    feature.Groups = new List<string>();
+                    feature.Users = new List<string>();
                 }
             }
         }
