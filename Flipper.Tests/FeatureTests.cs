@@ -18,7 +18,6 @@ namespace Flipper.Tests
            flipper.ActivateFeature(feature);
 
            Assert.IsTrue(flipper.IsActive(feature));
-
        }
 
        [Test]
@@ -36,7 +35,7 @@ namespace Flipper.Tests
        }
 
        [Test]
-       public void Can_Add_Group()
+       public void Can_Define_A_Group()
        {
            flipper.DefineGroup("test", new List<string>() { "1" });
 
@@ -80,6 +79,68 @@ namespace Flipper.Tests
 
            Assert.IsTrue(flipper.IsActive(feature, "1"));
 
+       }
+
+       [Test]
+       public void Can_Deactivate_A_User_In_A_Feature()
+       {
+           var feature = flipper.Get("Test");
+
+           flipper.ActivateUser(feature, "1");
+
+           Assert.IsTrue(flipper.IsActive(feature, "1"));
+
+           flipper.DeactivateUser(feature, "1");
+
+           Assert.IsFalse(flipper.IsActive(feature, "1"));
+       }
+
+       [Test]
+       public void Can_Activate_A_Percentage()
+       {
+           var feature = flipper.Get("Test");
+           
+           flipper.ActivatePercentage(feature, 1);
+
+           Assert.IsTrue(flipper.IsActive(feature, "1"));
+           Assert.IsFalse(flipper.IsActive(feature, "2"));
+           Assert.IsFalse(flipper.IsActive(feature, "21"));
+           Assert.IsFalse(flipper.IsActive(feature, "31"));
+
+           flipper.ActivatePercentage(feature, 21);
+
+           Assert.IsTrue(flipper.IsActive(feature, "1"));
+           Assert.IsTrue(flipper.IsActive(feature, "102"));
+           Assert.IsTrue(flipper.IsActive(feature, "1021"));
+           Assert.IsFalse(flipper.IsActive(feature, "31"));
+
+       }
+
+       [Test]
+       public void Can_Deactivate_A_Percentage()
+       {
+           var feature = flipper.Get("Test");
+
+           flipper.ActivatePercentage(feature, 1);
+
+           Assert.IsTrue(flipper.IsActive(feature, "1"));
+
+           flipper.DeactivatePercentage(feature);
+
+           Assert.IsFalse(flipper.IsActive(feature, "1"));
+       }
+
+       [Test]
+       public void Feature_Is_Always_Active_If_Percentage_Set_To_100()
+       {
+           var feature = flipper.Get("Test");
+
+           flipper.ActivateFeature(feature);
+
+           Assert.IsTrue(flipper.IsActive(feature, "1"));
+           Assert.IsTrue(flipper.IsActive(feature));
+           Assert.IsTrue(flipper.IsActive(feature, "12341"));
+           
        }
    }
 }

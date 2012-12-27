@@ -61,7 +61,7 @@ namespace Flipper
             }
             else
             {
-                return int.Parse(user) % 100 < Percentage || Users.Contains(user) || flipper.UserInGroup(user, Groups);
+                return int.Parse(user) % 100 <= Percentage || Users.Contains(user) || flipper.UserInGroup(user, Groups);
             }
         }
     }
@@ -143,16 +143,6 @@ namespace Flipper
             SaveFeature(feature);
         }
 
-        public void DefineGroup(string group, List<string> users)
-        {
-            SaveGroup(group, users);
-        }
-
-        public bool IsActive(Feature feature, string user = "")
-        {
-            return feature.IsActive(this, user);
-        }
-
         public void ActivatePercentage(Feature feature, int percentage)
         {
             feature.Percentage = percentage;
@@ -165,15 +155,25 @@ namespace Flipper
             SaveFeature(feature);
         }
 
+        public void DefineGroup(string group, List<string> users)
+        {
+            SaveGroup(group, users);
+        }
+
+        public bool IsActive(Feature feature, string user = "")
+        {
+            return feature.IsActive(this, user);
+        }
+
         public bool UserInGroup(string user, List<string> groups)
         {
-            foreach(var g in groups)
+            foreach (var g in groups)
             {
                 if (GetGroup(g).Contains(user))
                 {
                     return true;
                 }
-           }
+            }
             return false;
         }
 
@@ -187,8 +187,8 @@ namespace Flipper
             using (var client = manager.GetClient())
             using (var redis = client.As<List<string>>())
             {
-               var hash =  redis.GetHash<string>("Flipper:Groups");
-               redis.SetEntryInHash(hash, groupname, group);
+                var hash = redis.GetHash<string>("Flipper:Groups");
+                redis.SetEntryInHash(hash, groupname, group);
             }
         }
 
@@ -197,8 +197,8 @@ namespace Flipper
             using (var client = manager.GetClient())
             using (var redis = client.As<List<string>>())
             {
-               var hash =  redis.GetHash<string>("Flipper:Groups");
-               return redis.GetValueFromHash(hash, groupname);
+                var hash = redis.GetHash<string>("Flipper:Groups");
+                return redis.GetValueFromHash(hash, groupname);
             }
         }
 
@@ -207,7 +207,7 @@ namespace Flipper
             using (var client = manager.GetClient())
             using (var featureClient = client.As<Feature>())
             {
-                
+
                 featureClient.Lists[String.Format("Flipper:Features")].Remove(feature);
                 featureClient.Lists[String.Format("Flipper:Features")].Add(feature);
             }
