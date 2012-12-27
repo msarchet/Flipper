@@ -1,8 +1,20 @@
 Flipper
 =======
 
-A library for Flipping features on and off in .NET projects
+Flipper is a small library for flipping features on and off in .NET projects.
 
-This requires using ServiceStack.Redis as the storage. 
+It was inspired by the rails gem rollout. https://github.com/jamesgolick/rollout
 
-I haven't tested this yet so it may not work :)
+v 0.1
+=====
+
+- Added test coverage of basic features
+
+
+Roadmap
+=======
+
+- Document Flipper.cs and Feature.cs
+- Add and example project showing use
+- More Tests
+- Add extendable percentage calculating
