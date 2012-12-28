@@ -14,10 +14,10 @@ namespace Flipper
         public List<string> Groups { get; set; }
         public int Percentage { get; set; }
 
-        public Feature(Flipper flipper, string Name)
+        public Feature(Actuator actuator, string Name)
         {
             this.Name = Name;
-            flipper.LoadFeature(this);
+            actuator.LoadFeature(this);
         }
 
         public void AddUser(string user)
@@ -53,7 +53,7 @@ namespace Flipper
             Percentage = 0;
         }
 
-        public bool IsActive(Flipper flipper, string user)
+        public bool IsActive(Actuator flipper, string user)
         {
             if (user == "")
             {
@@ -66,11 +66,11 @@ namespace Flipper
         }
     }
 
-    public class Flipper
+    public class Actuator
     {
         private IRedisClientsManager manager;
 
-        public Flipper(IRedisClientsManager Manager)
+        public Actuator(IRedisClientsManager Manager)
         {
             manager = Manager;
         }

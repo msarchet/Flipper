@@ -4,27 +4,27 @@ using System.Linq;
 using NUnit.Framework;
 using Ninject;
 using ServiceStack.Redis;
-using Flipper;
+using Actuator;
 
 namespace Flipper.Tests
 {
     [TestFixture]
     public class TestBase
     {
-        protected Flipper flipper;
+        protected Actuator actuator;
         private IRedisClientsManager manager;
 
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
             manager = new BasicRedisClientManager("localhost:6379");
-            flipper = new Flipper(manager);           
+            actuator = new Actuator(manager);           
         }
 
         [TestFixtureTearDown]
         public void TestFixtureTearDown()
         {
-            flipper = null;
+            actuator = null;
         }
 
         [SetUp]
