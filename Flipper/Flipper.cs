@@ -14,10 +14,10 @@ namespace Flipper
         public List<string> Groups { get; set; }
         public int Percentage { get; set; }
 
-        public Feature(Flipper flipper, string Name)
+        public Feature(FeatureFlipper FeatureFlipper, string Name)
         {
             this.Name = Name;
-            flipper.LoadFeature(this);
+            FeatureFlipper.LoadFeature(this);
         }
 
         public void AddUser(string user)
@@ -53,7 +53,7 @@ namespace Flipper
             Percentage = 0;
         }
 
-        public bool IsActive(Flipper flipper, string user)
+        public bool IsActive(FeatureFlipper FeatureFlipper, string user)
         {
             if (user == "")
             {
@@ -61,16 +61,16 @@ namespace Flipper
             }
             else
             {
-                return int.Parse(user) % 100 <= Percentage || Users.Contains(user) || flipper.UserInGroup(user, Groups);
+                return int.Parse(user) % 100 <= Percentage || Users.Contains(user) || FeatureFlipper.UserInGroup(user, Groups);
             }
         }
     }
 
-    public class Flipper
+    public class FeatureFlipper
     {
         private IRedisClientsManager manager;
 
-        public Flipper(IRedisClientsManager Manager)
+        public FeatureFlipper(IRedisClientsManager Manager)
         {
             manager = Manager;
         }

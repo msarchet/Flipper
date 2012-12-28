@@ -11,20 +11,20 @@ namespace Flipper.Tests
     [TestFixture]
     public class TestBase
     {
-        protected Flipper flipper;
+        protected FeatureFlipper FeatureFlipper;
         private IRedisClientsManager manager;
 
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
             manager = new BasicRedisClientManager("localhost:6379");
-            flipper = new Flipper(manager);           
+            FeatureFlipper = new FeatureFlipper(manager);           
         }
 
         [TestFixtureTearDown]
         public void TestFixtureTearDown()
         {
-            flipper = null;
+            FeatureFlipper = null;
         }
 
         [SetUp]
