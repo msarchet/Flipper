@@ -5,7 +5,9 @@ Flipper is a small library for flipping features on and off in .NET projects.
 
 It was inspired by the rails gem rollout. https://github.com/jamesgolick/rollout
 
-It is available via a nuget package
+It is available via a nuget package https://www.nuget.org/packages/Flipper
+
+    Install-Package Flipper
 
 Examples
 ========
