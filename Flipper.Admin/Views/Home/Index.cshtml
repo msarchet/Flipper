@@ -1,0 +1,34 @@
+﻿@using System.Linq;
+@{
+    ViewBag.Title = "Index";
+}
+
+<h1>Information</h1>
+
+<ul>
+@foreach (var feature in ViewBag.FlipperInfo.Features)
+{
+    <li>
+        Name: @feature.Name Percentage: @feature.Percentage
+        
+        Groups:
+        <ul>
+            @foreach (var group in feature.Groups)
+            {
+                <li>
+                    @group
+                </li>
+            }
+        </ul>
+        Users:
+        <ul>
+            @foreach (var user in feature.Users)
+            {
+                <li>
+                    @user
+                </li>
+            }
+        </ul>
+    </li>
+}
+</ul>
