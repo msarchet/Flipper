@@ -37,7 +37,10 @@
 
 <p>It was inspired by the rails gem rollout. <a href="https://github.com/jamesgolick/rollout">https://github.com/jamesgolick/rollout</a></p>
 
-<p>It is available via a nuget package</p>
+<p>It is available via a nuget package <a href="https://www.nuget.org/packages/Flipper">https://www.nuget.org/packages/Flipper</a></p>
+
+<pre><code>Install-Package Flipper
+</code></pre>
 
 <h1>Examples</h1>
 
@@ -53,7 +56,8 @@
 
 <p>Allowing a percentage of users</p>
 
-<pre><code>actuator.ActivatePercentage(feature, 10); //Allows 10% of users to use the feature
+<pre><code>    //Allows 10% of users to use the feature
+actuator.ActivatePercentage(feature, 10); 
 </code></pre>
 
 <p>Creating a group</p>
@@ -73,9 +77,12 @@
 
 <p>Check if a feature is active</p>
 
-<pre><code>actuator.IsActive(feature); //this returns true only if the percentage is 100
+<pre><code>//this returns true only if the percentage is 100
+    actuator.IsActive(feature); 
 
-actuator.IsActive(feature, "1"); //this returns true if the user is in the percentage, users, or a group
+
+    //this returns true if the user is in the percentage, users, or a group
+actuator.IsActive(feature, "1"); 
 </code></pre>
 
 <h1>v 0.1.1</h1>
