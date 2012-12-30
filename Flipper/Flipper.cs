@@ -14,25 +14,43 @@ namespace Flipper
         public List<string> Groups { get; set; }
         public int Percentage { get; set; }
 
+
+        /// <summary>
+        /// Creates and initalizes a feature
+        /// </summary>
+        /// <param name="actuator">Actuator</param>
+        /// <param name="Name">Name of the feature</param>
         public Feature(Actuator actuator, string Name)
         {
             this.Name = Name;
             actuator.LoadFeature(this);
         }
 
-        public void AddUser(string user)
+        /// <summary>
+        /// Adds a UserID to a feature
+        /// </summary>
+        /// <param name="userID">The userID to add</param>
+        public void AddUser(string userID)
         {
-            if (!Users.Contains(user))
+            if (!Users.Contains(userID))
             {
-                Users.Add(user);
+                Users.Add(userID);
             }
         }
 
-        public void RemoveUser(string user)
+        /// <summary>
+        /// Removes a UserID from a feature
+        /// </summary>
+        /// <param name="userID">The UserID to remove</param>
+        public void RemoveUser(string userID)
         {
-            Users.Remove(user);
+            Users.Remove(userID);
         }
 
+        /// <summary>
+        /// Adds the group with the name to the feature
+        /// </summary>
+        /// <param name="group">The name of the group</param>
         public void AddGroup(string group)
         {
             if (!Groups.Contains(group))
@@ -41,11 +59,18 @@ namespace Flipper
             }
         }
 
+        /// <summary>
+        /// Removes a group from the feature
+        /// </summary>
+        /// <param name="group">The name of the Group</param>
         public void RemoveGroup(string group)
         {
             Groups.Remove(group);
         }
 
+        /// <summary>
+        /// Clears all Groups, Users and sets the percentage to 0
+        /// </summary>
         public void Clear()
         {
             Groups.Clear();
@@ -53,7 +78,13 @@ namespace Flipper
             Percentage = 0;
         }
 
-        public bool IsActive(Actuator flipper, string user)
+        /// <summary>
+        /// Returns a bool indicating if the feature is active
+        /// </summary>
+        /// <param name="actuator">The actuator</param>
+        /// <param name="user">Optional User to check</param>
+        /// <returns>Bool indicating if the feature active</returns>
+        public bool IsActive(Actuator actuator, string user)
         {
             if (user == "")
             {
@@ -61,20 +92,32 @@ namespace Flipper
             }
             else
             {
-                return int.Parse(user) % 100 <= Percentage || Users.Contains(user) || flipper.UserInGroup(user, Groups);
+                return int.Parse(user) % 100 <= Percentage || Users.Contains(user) || actuator.UserInGroup(user, Groups);
             }
         }
     }
 
+    /// <summary>
+    /// Class for managing features
+    /// </summary>
     public class Actuator
     {
         private IRedisClientsManager manager;
 
+        /// <summary>
+        /// Creates a new instance of a Flipper.Actuator
+        /// </summary>
+        /// <param name="Manager">A IRedisClientsManager for persistance</param>
         public Actuator(IRedisClientsManager Manager)
         {
             manager = Manager;
         }
 
+
+        /// <summary>
+        /// Loads a feature from redis
+        /// </summary>
+        /// <param name="feature">The feature to load</param>
         public void LoadFeature(Feature feature)
         {
             using (var client = manager.GetClient())
@@ -99,77 +142,136 @@ namespace Flipper
         }
 
 
-        public void AddUserToGroup(string user, string group)
+        /// <summary>
+        /// Adds the UserID to the indicated Group
+        /// </summary>
+        /// <param name="userID">The UserID</param>
+        /// <param name="group">The name of the group</param>
+        public void AddUserToGroup(string userID, string group)
         {
             var groupList = GetGroup(group);
-            groupList.Add(user);
+            groupList.Add(userID);
             SaveGroup(group, groupList);
 
         }
 
+        /// <summary>
+        /// Sets a feature to active by setting the percentage to 100
+        /// </summary>
+        /// <param name="feature">The feature to activate</param>
         public void ActivateFeature(Feature feature)
         {
             feature.Percentage = 100;
             SaveFeature(feature);
         }
 
+        /// <summary>
+        /// Sets a feature to inactive by Clearing the feature
+        /// </summary>
+        /// <param name="feature">The feature to deactivate</param>
         public void DeactiveFeature(Feature feature)
         {
             feature.Clear();
             SaveFeature(feature);
         }
 
+        /// <summary>
+        /// Activates the group on the feature
+        /// </summary>
+        /// <param name="feature">The feature</param>
+        /// <param name="group">The group to activate</param>
         public void ActivateGroup(Feature feature, string group)
         {
             feature.AddGroup(group);
             SaveFeature(feature);
         }
 
+        /// <summary>
+        /// Deactivates the group on the feature
+        /// </summary>
+        /// <param name="feature">The feature</param>
+        /// <param name="group">The group to deactivate</param>
         public void DeactivateGroup(Feature feature, string group)
         {
             feature.RemoveGroup(group);
             SaveFeature(feature);
         }
 
-        public void ActivateUser(Feature feature, string user)
+        /// <summary>
+        /// Activates a User on the feature
+        /// </summary>
+        /// <param name="feature">The feature</param>
+        /// <param name="userID">The UserID to activate</param>
+        public void ActivateUser(Feature feature, string userID)
         {
-            feature.AddUser(user);
+            feature.AddUser(userID);
             SaveFeature(feature);
         }
 
-        public void DeactivateUser(Feature feature, string user)
+        /// <summary>
+        /// Deactivate the User on a feature
+        /// </summary>
+        /// <param name="feature">The feature</param>
+        /// <param name="userID">The UserID to deactivate</param>
+        public void DeactivateUser(Feature feature, string userID)
         {
-            feature.RemoveUser(user);
+            feature.RemoveUser(userID);
             SaveFeature(feature);
         }
 
+        /// <summary>
+        /// Activates the percentage on a feature
+        /// </summary>
+        /// <param name="feature">The feature</param>
+        /// <param name="percentage">The percentage to allow active</param>
         public void ActivatePercentage(Feature feature, int percentage)
         {
             feature.Percentage = percentage;
             SaveFeature(feature);
         }
 
+        /// <summary>
+        /// Deactivates a the percentage on a feature (sets to 0)
+        /// </summary>
+        /// <param name="feature">The feature</param>
         public void DeactivatePercentage(Feature feature)
         {
             feature.Percentage = 0;
             SaveFeature(feature);
         }
 
+        /// <summary>
+        /// Defines a group, or replaces an existing group
+        /// </summary>
+        /// <param name="group">The name of the group</param>
+        /// <param name="users">A list of userIds</param>
         public void DefineGroup(string group, List<string> users)
         {
             SaveGroup(group, users);
         }
 
-        public bool IsActive(Feature feature, string user = "")
+        /// <summary>
+        /// Indicates if a feature is active
+        /// </summary>
+        /// <param name="feature">The feature</param>
+        /// <param name="userID">Opitional specific userID</param>
+        /// <returns>Bool indicating if active</returns>
+        public bool IsActive(Feature feature, string userID = "")
         {
-            return feature.IsActive(this, user);
+            return feature.IsActive(this, userID);
         }
 
-        public bool UserInGroup(string user, List<string> groups)
+        /// <summary>
+        /// Indicates if a user is in a group
+        /// </summary>
+        /// <param name="userID">The userID to check</param>
+        /// <param name="groups">The groups to check</param>
+        /// <returns></returns>
+        public bool UserInGroup(string userID, List<string> groups)
         {
             foreach (var g in groups)
             {
-                if (GetGroup(g).Contains(user))
+                if (GetGroup(g).Contains(userID))
                 {
                     return true;
                 }
@@ -177,21 +279,20 @@ namespace Flipper
             return false;
         }
 
+        /// <summary>
+        /// Get's an existing feature or returns a new feature
+        /// </summary>
+        /// <param name="name">The name of the feature to get</param>
+        /// <returns>a Flipper.Feature</returns>
         public Feature Get(string name)
         {
             return new Feature(this, name);
         }
-
-        public void SaveGroup(string groupname, List<string> group)
-        {
-            using (var client = manager.GetClient())
-            using (var redis = client.As<List<string>>())
-            {
-                var hash = redis.GetHash<string>("Flipper:Groups");
-                redis.SetEntryInHash(hash, groupname, group);
-            }
-        }
-
+        /// <summary>
+        /// Gets the users in a group
+        /// </summary>
+        /// <param name="groupname"></param>
+        /// <returns>A List<string> of users in the group</string></returns>
         public List<string> GetGroup(string groupname)
         {
             using (var client = manager.GetClient())
@@ -202,7 +303,7 @@ namespace Flipper
             }
         }
 
-        public void SaveFeature(Feature feature)
+        private void SaveFeature(Feature feature)
         {
             using (var client = manager.GetClient())
             using (var featureClient = client.As<Feature>())
@@ -212,5 +313,16 @@ namespace Flipper
                 featureClient.Lists[String.Format("Flipper:Features")].Add(feature);
             }
         }
+
+        private void SaveGroup(string groupname, List<string> group)
+        {
+            using (var client = manager.GetClient())
+            using (var redis = client.As<List<string>>())
+            {
+                var hash = redis.GetHash<string>("Flipper:Groups");
+                redis.SetEntryInHash(hash, groupname, group);
+            }
+        }
+
     }
 }

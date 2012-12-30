@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using Ninject;
 using ServiceStack.Redis;
-using Actuator;
 
 namespace Flipper.Tests
 {
