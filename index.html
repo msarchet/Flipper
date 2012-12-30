@@ -1,47 +1,111 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Flipper by msarchet</title>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Flipper : A library for Flipping features on and off in .NET rprojects" />
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Flipper</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/msarchet/Flipper">View on GitHub</a>
+
+          <h1 id="project_title">Flipper</h1>
+          <h2 id="project_tagline">A library for Flipping features on and off in .NET rprojects</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/msarchet/Flipper/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/msarchet/Flipper/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
         <h1>Flipper</h1>
-        <p>A library for Flipping features on and off in .NET rprojects</p>
 
-        <p class="view"><a href="https://github.com/msarchet/Flipper">View the Project on GitHub <small>msarchet/Flipper</small></a></p>
+<p>Flipper is a small library for flipping features on and off in .NET projects.</p>
 
+<p>It was inspired by the rails gem rollout. <a href="https://github.com/jamesgolick/rollout">https://github.com/jamesgolick/rollout</a></p>
 
-        <ul>
-          <li><a href="https://github.com/msarchet/Flipper/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/msarchet/Flipper/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/msarchet/Flipper">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h1>Flipper</h1>
+<p>It is available via a nuget package</p>
 
-<p>A library for Flipping features on and off in .NET projects</p>
+<h1>Examples</h1>
 
-<p>This requires using ServiceStack.Redis as the storage. </p>
+<p>Create an actuator</p>
 
-<p>I haven't tested this yet so it may not work :)</p>
+<pre><code>var actuator = new Flipper.Actuator(new RedisClient());
+</code></pre>
+
+<p>Define a new feature</p>
+
+<pre><code>var feature = actuator.Get("feature");
+</code></pre>
+
+<p>Allowing a percentage of users</p>
+
+<pre><code>actuator.ActivatePercentage(feature, 10); //Allows 10% of users to use the feature
+</code></pre>
+
+<p>Creating a group</p>
+
+<pre><code>actuator.DefineGroup("betaUsers", new List&lt;string&gt; () { "1", "2", "15" });
+</code></pre>
+
+<p>Assign a group to a feature</p>
+
+<pre><code>actuator.ActivateGroup(feature, "betaUsers");
+</code></pre>
+
+<p>Assign a user to a feature</p>
+
+<pre><code>actuator.ActivateUser(feature, "1");
+</code></pre>
+
+<p>Check if a feature is active</p>
+
+<pre><code>actuator.IsActive(feature); //this returns true only if the percentage is 100
+
+actuator.IsActive(feature, "1"); //this returns true if the user is in the percentage, users, or a group
+</code></pre>
+
+<h1>v 0.1.1</h1>
+
+<ul>
+<li>Renamed Flipper class to Actuator</li>
+</ul><h1>v 0.1</h1>
+
+<ul>
+<li>Added test coverage of basic features</li>
+</ul><h1>Roadmap</h1>
+
+<ul>
+<li>Document Flipper.cs and Feature.cs</li>
+<li>Add and example project showing use</li>
+<li>More Tests</li>
+<li>Add extendable percentage calculating</li>
+</ul>
       </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/msarchet">msarchet</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Flipper maintained by <a href="https://github.com/msarchet">msarchet</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
+
     
+
   </body>
 </html>
