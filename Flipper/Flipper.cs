@@ -9,10 +9,10 @@ namespace Flipper
 {
     public class Feature
     {
-        public string Name { get; set; }
-        public List<string> Users { get; set; }
-        public List<string> Groups { get; set; }
-        public int Percentage { get; set; }
+        internal string Name { get; set; }
+        internal List<string> Users { get; set; }
+        internal List<string> Groups { get; set; }
+        internal int Percentage { get; set; }
 
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Flipper
         /// Adds a UserID to a feature
         /// </summary>
         /// <param name="userID">The userID to add</param>
-        public void AddUser(string userID)
+        internal void AddUser(string userID)
         {
             if (!Users.Contains(userID))
             {
@@ -42,7 +42,7 @@ namespace Flipper
         /// Removes a UserID from a feature
         /// </summary>
         /// <param name="userID">The UserID to remove</param>
-        public void RemoveUser(string userID)
+        internal void RemoveUser(string userID)
         {
             Users.Remove(userID);
         }
@@ -51,7 +51,7 @@ namespace Flipper
         /// Adds the group with the name to the feature
         /// </summary>
         /// <param name="group">The name of the group</param>
-        public void AddGroup(string group)
+        internal void AddGroup(string group)
         {
             if (!Groups.Contains(group))
             {
@@ -63,7 +63,7 @@ namespace Flipper
         /// Removes a group from the feature
         /// </summary>
         /// <param name="group">The name of the Group</param>
-        public void RemoveGroup(string group)
+        internal void RemoveGroup(string group)
         {
             Groups.Remove(group);
         }
@@ -71,7 +71,7 @@ namespace Flipper
         /// <summary>
         /// Clears all Groups, Users and sets the percentage to 0
         /// </summary>
-        public void Clear()
+        internal void Clear()
         {
             Groups.Clear();
             Users.Clear();
@@ -82,18 +82,33 @@ namespace Flipper
         /// Returns a bool indicating if the feature is active
         /// </summary>
         /// <param name="actuator">The actuator</param>
-        /// <param name="user">Optional User to check</param>
+        /// <param name="userID">Optional User to check</param>
         /// <returns>Bool indicating if the feature active</returns>
-        public bool IsActive(Actuator actuator, string user)
+        internal bool IsActive(Actuator actuator, string userID)
         {
-            if (user == "")
+            if (userID == "")
             {
                 return Percentage == 100;
             }
             else
             {
-                return int.Parse(user) % 100 <= Percentage || Users.Contains(user) || actuator.UserInGroup(user, Groups);
+                return IsUserInPercentage(actuator, userID) || Users.Contains(userID) || actuator.UserInGroup(userID, Groups);
             }
+        }
+
+        private bool IsUserInPercentage(Actuator actuator, string userID)
+        {
+            if (Percentage == 100)
+            {
+                return true;
+            }
+            else if (Percentage != 100 || Percentage != 0)
+            {
+                return int.Parse(userID) % 100 <= Percentage;
+            }
+
+            return false;
+
         }
     }
 
@@ -309,8 +324,8 @@ namespace Flipper
             using (var featureClient = client.As<Feature>())
             {
 
-                featureClient.Lists[String.Format("Flipper:Features")].Remove(feature);
-                featureClient.Lists[String.Format("Flipper:Features")].Add(feature);
+                featureClient.Lists["Flipper:Features"].Remove(feature);
+                featureClient.Lists["Flipper:Features"].Add(feature);
             }
         }
 
