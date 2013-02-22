@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ServiceStack.Redis;
+using ServiceStack.Redis.Generic;
 
 namespace Flipper
 {
@@ -98,13 +99,29 @@ namespace Flipper
 
         private bool IsUserInPercentage(Actuator actuator, string userID)
         {
+      
+            //Add the user as a visitor
+            actuator.AddVisitorToFeature(this, userID);
+
             if (Percentage == 100)
             {
                 return true;
             }
             else if (Percentage != 100 || Percentage != 0)
             {
-                return int.Parse(userID) % 100 <= Percentage;
+                //find out of how many people who have visited have been allowed to view
+                var percentageAdded = (double)Users.Count() / actuator.UsersWhoHaveVisitedFeature() * 100;
+
+                var isLessThanAllowedPercentage = (int)percentageAdded < Percentage;
+                var userIsInPercentage = int.Parse(userID) % 100 <= Percentage;
+                
+                //Since everything is okay add the user
+                if (isLessThanAllowedPercentage && userIsInPercentage)
+                {
+                    actuator.ActivateUser(this, userID);
+
+                    return true;
+                }
             }
 
             return false;
@@ -339,5 +356,28 @@ namespace Flipper
             }
         }
 
+        internal const string VisitorKey = "Flipper:Visitors:{0}";
+
+        internal List<string> UsersWhoHaveVisitedFeature(Feature feature)
+        {
+            using(var client = manager.GetClient())
+            using(var redis = client.As<string>())
+            {
+                return redis.Lists[String.Format(VisitorKey, feature.Name)].Count();
+            }
+        }
+
+        internal void AddVisitorToFeature(Feature feature, string userid)
+        {
+            using (var client = manager.GetClient())
+            using (var redis = client.As<string>())
+            {
+                var visitorList = redis.Lists[String.Format(VisitorKey, feature.Name)];
+                if (!visitorList.Contains(userid))
+                {
+                    visitorList.Add(userid);
+                }
+            }
+        }
     }
 }
