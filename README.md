@@ -14,7 +14,7 @@ Examples
 
 Create an actuator
 
-    var actuator = new Flipper.Actuator(new RedisClient());
+  var actuator = new Flipper.Actuator(new RedisClient());
 
 Define a new feature
 
@@ -22,7 +22,8 @@ Define a new feature
 
 Allowing a percentage of users
 
-	actuator.ActivatePercentage(feature, 10); //Allows 10% of users to use the feature
+  //Allows 10% of users to use the feature
+	actuator.ActivatePercentage(feature, 10); 
 
 Creating a group
 
@@ -36,13 +37,19 @@ Assign a user to a feature
 
 	actuator.ActivateUser(feature, "1");
 
-
 Check if a feature is active
 
-	actuator.IsActive(feature); //this returns true only if the percentage is 100
+  //True only if the percentage is 100
+	actuator.IsActive(feature); 
 
-	actuator.IsActive(feature, "1"); //this returns true if the user is in the percentage, users, or a group
+  //Indicates if the user is in the percentage, users, or a group
+	actuator.IsActive(feature, "1"); 
 
+v 0.2.1
+=======
+
+- Added Custom Func<string, Feature, bool> instead of hardcoded parsing
+  - Default is same as the old way 
 
 v 0.1.1
 =======
@@ -58,7 +65,6 @@ v 0.1
 Roadmap
 =======
 
-- Document Flipper.cs and Feature.cs
 - Add and example project showing use
+- Make percentages accurate in lower sample sizes
 - More Tests
-- Add extendable percentage calculating
