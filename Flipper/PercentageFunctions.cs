@@ -6,7 +6,7 @@ namespace Flipper
 {
     public class PercentageFunctions
     {
-        private static Random Randomizer = new Random(191872349861231);
+        private static Random Randomizer = new Random(191872349);
 
         public static Func<string, Feature, bool> DiceRoll = (user, feature) => { return (Randomizer.Next() % 100) <= feature.Percentage; };
 
