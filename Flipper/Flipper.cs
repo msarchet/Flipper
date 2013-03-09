@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ServiceStack.Redis;
-using ServiceStack.Redis.Generic;
 
 namespace Flipper
 {
@@ -110,10 +107,10 @@ namespace Flipper
             else if (Percentage != 100 || Percentage != 0)
             {
                 //find out of how many people who have visited have been allowed to view
-                var percentageAdded = (double)Users.Count() / actuator.UsersWhoHaveVisitedFeature() * 100;
+                var percentageAdded = (double)Users.Count() / actuator.UsersWhoHaveVisitedFeature(this).Count() * 100;
 
                 var isLessThanAllowedPercentage = (int)percentageAdded < Percentage;
-                var userIsInPercentage = int.Parse(userID) % 100 <= Percentage;
+                var userIsInPercentage = actuator.UserPercentageFunction(userID, this);
                 
                 //Since everything is okay add the user
                 if (isLessThanAllowedPercentage && userIsInPercentage)
@@ -135,7 +132,8 @@ namespace Flipper
     public class Actuator
     {
         private IRedisClientsManager manager;
-
+        public Func<string, Feature, bool> UserPercentageFunction;
+        
         /// <summary>
         /// Creates a new instance of a Flipper.Actuator
         /// </summary>
@@ -143,8 +141,19 @@ namespace Flipper
         public Actuator(IRedisClientsManager Manager)
         {
             manager = Manager;
+            UserPercentageFunction = (u, f) => { return (int.Parse(u) % 100) <= f.Percentage; };
         }
 
+        /// <summary>
+        /// Creates a new instance of a Flipper.Actuator
+        /// </summary>
+        /// <param name="Manager">An IRedisClientsManager ofr persistance</param>
+        /// <param name="UserPercentageFunction">A Func that returns if a user is in the Percentage for a feature</param>
+        public Actuator(IRedisClientsManager Manager, Func<string, Feature, bool> UserPercentageFunction)
+        {
+            manager = Manager;
+            this.UserPercentageFunction = UserPercentageFunction;
+        }
 
         /// <summary>
         /// Loads a feature from redis
@@ -312,7 +321,7 @@ namespace Flipper
         }
 
         /// <summary>
-        /// Get's an existing feature or returns a new feature
+        /// Gets an existing feature or returns a new feature
         /// </summary>
         /// <param name="name">The name of the feature to get</param>
         /// <returns>a Flipper.Feature</returns>
@@ -363,7 +372,7 @@ namespace Flipper
             using(var client = manager.GetClient())
             using(var redis = client.As<string>())
             {
-                return redis.Lists[String.Format(VisitorKey, feature.Name)].Count();
+                return redis.Lists[String.Format(VisitorKey, feature.Name)].ToList();
             }
         }
 
