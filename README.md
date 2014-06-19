@@ -14,36 +14,36 @@ Examples
 
 Create an actuator
 
-  var actuator = new Flipper.Actuator(new RedisClient());
+    var actuator = new Flipper.Actuator(new RedisClient());
 
 Define a new feature
 
-	var feature = actuator.Get("feature");
+    var feature = actuator.Get("feature");
 
 Allowing a percentage of users
 
-  //Allows 10% of users to use the feature
-	actuator.ActivatePercentage(feature, 10); 
+    //Allows 10% of users to use the feature
+    actuator.ActivatePercentage(feature, 10); 
 
 Creating a group
 
-	actuator.DefineGroup("betaUsers", new List<string> () { "1", "2", "15" });
+    actuator.DefineGroup("betaUsers", new List<string> () { "1", "2", "15" });
 
 Assign a group to a feature
 
-	actuator.ActivateGroup(feature, "betaUsers");
+    actuator.ActivateGroup(feature, "betaUsers");
 
 Assign a user to a feature
 
-	actuator.ActivateUser(feature, "1");
+    actuator.ActivateUser(feature, "1");
 
 Check if a feature is active
 
-  //True only if the percentage is 100
-	actuator.IsActive(feature); 
+    //True only if the percentage is 100
+    actuator.IsActive(feature); 
 
-  //Indicates if the user is in the percentage, users, or a group
-	actuator.IsActive(feature, "1"); 
+    //Indicates if the user is in the percentage, users, or a group
+    actuator.IsActive(feature, "1"); 
 
 v 0.2.1
 =======
@@ -60,7 +60,6 @@ v 0.1
 =====
 
 - Added test coverage of basic features
-
 
 Roadmap
 =======
